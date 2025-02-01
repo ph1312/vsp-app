@@ -2,21 +2,25 @@
   "name": "VSP Zoeker",
   "short_name": "VSP",
   "description": "VSP zoeker voor PM1 en PM2",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "/vsp-app/index.html",
+  "scope": "/vsp-app/",
   "display": "standalone",
   "background_color": "#f0f2f5",
   "theme_color": "#007bff",
+  "orientation": "portrait",
+  "id": "/vsp-app/",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "/vsp-app/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "/vsp-app/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

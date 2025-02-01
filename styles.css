@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 16px;
+    background: #f0f2f5;
+    min-height: 100vh;
+}
+
+.header {
+    max-width: 600px;
+    margin: 0 auto 16px;
+    text-align: center;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.machine-select {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.machine-button {
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #6c757d;
+    color: white;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.machine-button.active {
+    background: #007bff;
+}
+
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.result-card {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.card-field {
+    margin-bottom: 4px;
+}
+
+.thumbnail {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 12px;
+}
+
+/* Dark mode ondersteuning */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1a1a1a;
+        color: #fff;
+    }
+    .result-card {
+        background: #2d2d2d;
+    }
+    .search-input {
+        background: #2d2d2d;
+        color: #fff;
+        border-color: #444;
+    }
+    .machine-button {
+        background: #495057;
+    }
+    .machine-button.active {
+        background: #0056b3;
+    }
+}

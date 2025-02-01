@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#007bff">
+    <title>VSP Zoeker</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">VSP Zoeker</h1>
+        <div class="machine-select">
+            <button class="machine-button" onclick="selectMachine('pm1')" id="pm1Button">PM1</button>
+            <button class="machine-button active" onclick="selectMachine('pm2')" id="pm2Button">PM2</button>
+        </div>
+    </div>
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Zoek op E-nummer..." id="searchInput">
+        <div id="results"></div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

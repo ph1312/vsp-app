@@ -2,11 +2,14 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VSP Zoeker">
     <title>VSP Zoeker</title>
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -22,20 +25,50 @@
         <div id="results"></div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- PWA Install en Redirect Script -->
     <script>
+        // Check of de app in standalone mode draait
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+            // App draait al als PWA
+            console.log('App draait als PWA');
+        } else {
+            // Check of we al een cookie hebben die aangeeft dat de app geïnstalleerd is
+            if (localStorage.getItem('appInstalled')) {
+                // Probeer te redirecten naar de geïnstalleerde app
+                window.location.replace('vsp://app');
+            }
+        }
+
+        // Luister naar de install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Bewaar het event
+            let deferredPrompt = e;
+            
+            // Als de gebruiker installeert, sla dit op
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    localStorage.setItem('appInstalled', 'true');
+                }
+            });
+        });
+
         // Register service worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
+                navigator.serviceWorker.register('service-worker.js', {
+                    scope: '/vsp-app/'
+                })
+                .then(registration => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
             });
         }
     </script>
+
+    <!-- App Scripts -->
+    <script src="app.js"></script>
 </body>
 </html>

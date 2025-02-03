@@ -9,6 +9,7 @@ const searchInput = document.getElementById('searchInput');
 const resultsDiv = document.getElementById('results');
 const pm1Button = document.getElementById('pm1Button');
 const pm2Button = document.getElementById('pm2Button');
+const pulpButton = document.getElementById('pulpButton'); // Nieuwe regel
 
 function selectMachine(machine) {
     currentMachine = machine;
@@ -16,6 +17,7 @@ function selectMachine(machine) {
     // Update buttons
     pm1Button.classList.toggle('active', machine === 'pm1');
     pm2Button.classList.toggle('active', machine === 'pm2');
+    pulpButton.classList.toggle('active', machine === 'pulp'); // Nieuwe regel
     
     // Update zoekresultaten
     findMatches(searchInput.value);

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vsp-zoeker-v2';
+const CACHE_NAME = 'vsp-zoeker-v3';
 const ASSETS_TO_CACHE = [
   '/vsp-app/',
   '/vsp-app/index.html',

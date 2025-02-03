@@ -1,7 +1,8 @@
 let currentMachine = 'pm2';
 const vspData = {
     pm1: { vsp_lijst: [] },
-    pm2: { vsp_lijst: [] }
+    pm2: { vsp_lijst: [] },
+    pulp: { vsp_lijst: [] }
 };
 
 const searchInput = document.getElementById('searchInput');
@@ -76,11 +77,12 @@ window.addEventListener('load', () => {
 // Laad beide JSON bestanden
 Promise.all([
     fetch('pm1_vsp_lijst.json').then(response => response.json()),
-    fetch('pm2_vsp_lijst.json').then(response => response.json())
-]).then(([pm1Data, pm2Data]) => {
+    fetch('pm2_vsp_lijst.json').then(response => response.json()),
+    fetch('vsp_lijstcentralepulp.json').then(response => response.json())
+]).then(([pm1Data, pm2Data, pulpData]) => {
     vspData.pm1 = pm1Data;
     vspData.pm2 = pm2Data;
-    // Start met opgeslagen of standaard machine
-    const savedMachine = localStorage.getItem('selectedMachine') || 'pm2';
-    selectMachine(savedMachine);
+    vspData.pulp = pulpData;
+    // Start met PM2 geselecteerd
+    findMatches(searchInput.value);
 }).catch(error => console.error('Error loading data:', error));

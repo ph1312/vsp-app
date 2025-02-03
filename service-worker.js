@@ -6,6 +6,7 @@ const ASSETS_TO_CACHE = [
   '/vsp-app/app.js',
   '/vsp-app/pm1_vsp_lijst.json',
   '/vsp-app/pm2_vsp_lijst.json',
+  '/vsp-app/vsp_lijstcentralepulp.json',
   '/vsp-app/icons/icon-192x192.png',
   '/vsp-app/icons/icon-512x512.png',
   '/vsp-app/manifest.json'

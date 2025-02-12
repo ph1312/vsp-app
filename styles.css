@@ -40,7 +40,12 @@ body {
     background: #007bff;
 }
 
-.search-container {
+#mainContent {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-container, .procedures-container {
     max-width: 600px;
     margin: 0 auto;
 }
@@ -81,16 +86,59 @@ body {
     margin-bottom: 12px;
 }
 
+.view-select {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px auto;
+    max-width: 600px;
+}
+
+.view-button {
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #6c757d;
+    color: white;
+    flex: 1;
+    max-width: 200px;
+}
+
+.view-button.active {
+    background: #007bff;
+}
+
+.procedure-select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: white;
+    box-sizing: border-box;
+}
+
+#procedureContent {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 16px;
+}
+
 /* Dark mode ondersteuning */
 @media (prefers-color-scheme: dark) {
     body {
         background: #1a1a1a;
         color: #fff;
     }
-    .result-card {
+    .result-card, #procedureContent {
         background: #2d2d2d;
     }
-    .search-input {
+    .search-input, .procedure-select {
         background: #2d2d2d;
         color: #fff;
         border-color: #444;
@@ -99,6 +147,12 @@ body {
         background: #495057;
     }
     .machine-button.active {
+        background: #0056b3;
+    }
+    .view-button {
+        background: #495057;
+    }
+    .view-button.active {
         background: #0056b3;
     }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vsp-zoeker-v2';
+const CACHE_NAME = 'vsp-zoeker-v4';
 const ASSETS_TO_CACHE = [
   '/vsp-app/',
   '/vsp-app/index.html',
@@ -7,12 +7,37 @@ const ASSETS_TO_CACHE = [
   '/vsp-app/pm1_vsp_lijst.json',
   '/vsp-app/pm2_vsp_lijst.json',
   '/vsp-app/vsp_lijstcentralepulp.json',
+  '/vsp-app/procedures/pm2_procedures.json',
   '/vsp-app/icons/icon-192x192.png',
   '/vsp-app/icons/icon-512x512.png',
   '/vsp-app/manifest.json'
 ];
 
-// Direct activeren zonder te wachten
+// Dynamically add all procedure HTML files to cache during install
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(async (cache) => {
+      // First cache the static assets
+      await cache.addAll(ASSETS_TO_CACHE);
+      
+      try {
+        // Fetch and parse the procedures JSON
+        const response = await fetch('/vsp-app/procedures/pm2_procedures.json');
+        const data = await response.json();
+        
+        // Add all procedure HTML files to cache
+        const procedureUrls = data.procedures.map(
+          proc => `/vsp-app/procedures/${proc.filename}`
+        );
+        await cache.addAll(procedureUrls);
+      } catch (error) {
+        console.error('Error caching procedure files:', error);
+      }
+    })
+  );
+  self.skipWaiting();
+});
+
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
@@ -23,32 +48,19 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      return clients.claim();
     })
   );
-  // Direct claimen zodat de app offline beschikbaar is
-  event.waitUntil(clients.claim());
 });
 
-// Direct installeren en cachen
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(ASSETS_TO_CACHE))
-  );
-});
-
-// Offline-first strategie
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        // Return cache direct als beschikbaar
         if (response) {
           return response;
         }
-
-        // Anders network proberen en cachen
         return fetch(event.request)
           .then(function(response) {
             if(!response || response.status !== 200) {

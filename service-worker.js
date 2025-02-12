@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const CACHE_NAME = 'vsp-zoeker-v4';
+=======
+const CACHE_NAME = 'vsp-zoeker-v3';
+>>>>>>> 615c9e4a6d0c8f4ec576aaf43914b85928836f24
 const ASSETS_TO_CACHE = [
   '/vsp-app/',
   '/vsp-app/index.html',

@@ -22,6 +22,11 @@
         </div>
     </div>
 
+    <div class="view-select">
+        <button class="view-button active" onclick="selectView('vsp')" id="vspButton">VSP Zoeker</button>
+        <button class="view-button" onclick="selectView('procedures')" id="proceduresButton">Procedures</button>
+    </div>
+
     <div id="mainContent">
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Zoek op E-nummer..." id="searchInput">
@@ -34,11 +39,6 @@
             </select>
             <div id="procedureContent"></div>
         </div>
-    </div>
-
-    <div class="view-select">
-        <button class="view-button active" onclick="selectView('vsp')" id="vspButton">VSP Zoeker</button>
-        <button class="view-button" onclick="selectView('procedures')" id="proceduresButton">Procedures</button>
     </div>
 
     <!-- PWA Install en Redirect Script -->

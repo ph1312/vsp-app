@@ -11,11 +11,7 @@ const searchInput = document.getElementById('searchInput');
 const resultsDiv = document.getElementById('results');
 const pm1Button = document.getElementById('pm1Button');
 const pm2Button = document.getElementById('pm2Button');
-<<<<<<< HEAD
 const pulpButton = document.getElementById('pulpButton');
-=======
-const pulpButton = document.getElementById('pulpButton'); // Nieuwe regel
->>>>>>> 615c9e4a6d0c8f4ec576aaf43914b85928836f24
 
 function selectMachine(machine) {
     currentMachine = machine;
@@ -23,11 +19,7 @@ function selectMachine(machine) {
     // Update buttons
     pm1Button.classList.toggle('active', machine === 'pm1');
     pm2Button.classList.toggle('active', machine === 'pm2');
-<<<<<<< HEAD
     pulpButton.classList.toggle('active', machine === 'pulp');
-=======
-    pulpButton.classList.toggle('active', machine === 'pulp'); // Nieuwe regel
->>>>>>> 615c9e4a6d0c8f4ec576aaf43914b85928836f24
     
     // Update content based on current view
     if (currentView === 'vsp') {
@@ -96,7 +88,7 @@ function displayResults(matches) {
 async function loadProcedures() {
     try {
         if (!proceduresData[currentMachine]) {
-            const response = await fetch(`${currentMachine}_procedures.json`);
+            const response = await fetch(`procedures/pm2_procedures.json`);
             proceduresData[currentMachine] = await response.json();
         }
         

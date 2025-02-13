@@ -34,16 +34,18 @@
         </div>
         
         <div id="proceduresSection" class="procedures-container" style="display: none;">
+            <div class="procedure-intro">
+                <h2>PM2 Procedures</h2>
+                <p>Selecteer een procedure om te downloaden</p>
+            </div>
             <select class="procedure-select" id="procedureSelect">
                 <option value="">Selecteer een procedure...</option>
             </select>
-            <div id="procedureContent"></div>
         </div>
     </div>
 
     <!-- PWA Install en Redirect Script -->
     <script>
-        // Check of de app in standalone mode draait
         if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
             console.log('App draait als PWA');
         } else {
@@ -52,7 +54,6 @@
             }
         }
 
-        // Luister naar de install prompt
         window.addEventListener('beforeinstallprompt', (e) => {
             let deferredPrompt = e;
             
@@ -63,7 +64,6 @@
             });
         });
 
-        // Register service worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')

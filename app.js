@@ -30,7 +30,6 @@ function selectMachine(machine) {
             loadProcedures();
         } else {
             document.getElementById('procedureSelect').innerHTML = '<option value="">Selecteer eerst PM2...</option>';
-            document.getElementById('procedureContent').innerHTML = '';
         }
     }
 
@@ -88,18 +87,35 @@ function displayResults(matches) {
 async function loadProcedures() {
     try {
         if (!proceduresData[currentMachine]) {
-            const response = await fetch(`procedures/pm2_procedures.json`);
+            const response = await fetch('procedures/pm2_procedures.json');
             proceduresData[currentMachine] = await response.json();
         }
         
         const select = document.getElementById('procedureSelect');
         select.innerHTML = '<option value="">Selecteer een procedure...</option>';
         
+        // Groepeer procedures per type
+        const groupedProcedures = {};
         proceduresData[currentMachine].procedures.forEach(proc => {
-            const option = document.createElement('option');
-            option.value = proc.id;
-            option.textContent = proc.title;
-            select.appendChild(option);
+            if (!groupedProcedures[proc.type]) {
+                groupedProcedures[proc.type] = [];
+            }
+            groupedProcedures[proc.type].push(proc);
+        });
+
+        // Voeg procedures toe per groep
+        Object.keys(groupedProcedures).sort().forEach(type => {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = type;
+            
+            groupedProcedures[type].forEach(proc => {
+                const option = document.createElement('option');
+                option.value = proc.id;
+                option.textContent = proc.title;
+                optgroup.appendChild(option);
+            });
+            
+            select.appendChild(optgroup);
         });
     } catch (error) {
         console.error('Error loading procedures:', error);
@@ -117,19 +133,32 @@ searchInput.addEventListener('input', (e) => {
 document.getElementById('procedureSelect').addEventListener('change', async (e) => {
     const procedureId = e.target.value;
     if (!procedureId) {
-        document.getElementById('procedureContent').innerHTML = '';
         return;
     }
     
     try {
-        const response = await fetch(`procedures/${procedureId}.html`);
-        const content = await response.text();
-        document.getElementById('procedureContent').innerHTML = content;
-        // Save last viewed procedure
-        localStorage.setItem('lastProcedure', procedureId);
+        const procedure = proceduresData[currentMachine].procedures.find(
+            p => p.id === procedureId
+        );
+        
+        if (procedure) {
+            // Download het Word bestand
+            const response = await fetch(`procedures/${procedure.filename}`);
+            const blob = await response.blob();
+            
+            // Maak een downloadlink
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = procedure.filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
     } catch (error) {
-        console.error('Error loading procedure content:', error);
-        document.getElementById('procedureContent').innerHTML = '<p>Fout bij het laden van de procedure.</p>';
+        console.error('Error downloading procedure:', error);
+        alert('Er ging iets mis bij het downloaden van de procedure.');
     }
 });
 
@@ -152,17 +181,6 @@ window.addEventListener('load', async () => {
     if (lastSearch) {
         searchInput.value = lastSearch;
         findMatches(lastSearch);
-    }
-
-    // Load last viewed procedure if we're in procedures view
-    if (currentView === 'procedures' && currentMachine === 'pm2') {
-        const lastProcedure = localStorage.getItem('lastProcedure');
-        if (lastProcedure) {
-            await loadProcedures();
-            document.getElementById('procedureSelect').value = lastProcedure;
-            const event = new Event('change');
-            document.getElementById('procedureSelect').dispatchEvent(event);
-        }
     }
 });
 

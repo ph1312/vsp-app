@@ -123,13 +123,6 @@ async function loadProcedures() {
     }
 }
 
-// Event listeners
-searchInput.addEventListener('input', (e) => {
-    findMatches(e.target.value);
-    // Save search term to localStorage
-    localStorage.setItem('lastSearch', e.target.value);
-});
-
 document.getElementById('procedureSelect').addEventListener('change', async (e) => {
     const procedureId = e.target.value;
     if (!procedureId) {
@@ -137,13 +130,19 @@ document.getElementById('procedureSelect').addEventListener('change', async (e) 
     }
     
     try {
+        // Vind de geselecteerde procedure
         const procedure = proceduresData[currentMachine].procedures.find(
             p => p.id === procedureId
         );
         
         if (procedure) {
-            // Download het Word bestand
+            console.log('Downloading:', procedure.filename); // Debug log
             const response = await fetch(`procedures/${procedure.filename}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const blob = await response.blob();
             
             // Maak een downloadlink
@@ -151,15 +150,28 @@ document.getElementById('procedureSelect').addEventListener('change', async (e) 
             const a = document.createElement('a');
             a.href = url;
             a.download = procedure.filename;
+            
+            // Trigger download
             document.body.appendChild(a);
             a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
+            
+            // Cleanup
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 100);
         }
     } catch (error) {
         console.error('Error downloading procedure:', error);
-        alert('Er ging iets mis bij het downloaden van de procedure.');
+        alert('Er ging iets mis bij het downloaden van de procedure. ' + error.message);
     }
+});
+
+// Event listeners
+searchInput.addEventListener('input', (e) => {
+    findMatches(e.target.value);
+    // Save search term to localStorage
+    localStorage.setItem('lastSearch', e.target.value);
 });
 
 // Load saved state

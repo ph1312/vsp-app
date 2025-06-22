@@ -33,8 +33,10 @@ function selectMachine(machine) {
         }
     }
 
-    // Save selection to localStorage
-    localStorage.setItem('selectedMachine', machine);
+    // Save selection to localStorage - NOTE: localStorage not supported in Claude artifacts
+    if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('selectedMachine', machine);
+    }
 }
 
 function selectView(view) {
@@ -51,8 +53,10 @@ function selectView(view) {
         loadProcedures();
     }
     
-    // Save view selection to localStorage
-    localStorage.setItem('currentView', view);
+    // Save view selection to localStorage - NOTE: localStorage not supported in Claude artifacts
+    if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('currentView', view);
+    }
 }
 
 function findMatches(searchTerm) {
@@ -61,11 +65,20 @@ function findMatches(searchTerm) {
         return;
     }
 
-    const normalizedSearch = searchTerm.replace('15E', '').replace('.', '');
+    // Maak de zoekterm lowercase voor case-insensitive zoeken
+    const normalizedSearch = searchTerm.toLowerCase().trim();
     
     const matches = vspData[currentMachine].vsp_lijst.filter(item => {
-        const normalizedItem = item.E_Circuit.replace('15E', '').replace('.', '');
-        return normalizedItem.includes(normalizedSearch);
+        // Zoek op E-Circuit nummer (bestaande functionaliteit)
+        const normalizedECircuit = item.E_Circuit.replace('15E', '').replace('.', '').toLowerCase();
+        const matchesECircuit = normalizedECircuit.includes(normalizedSearch.replace('15E', '').replace('.', ''));
+        
+        // Zoek op Machineonderdeel naam (nieuwe functionaliteit)
+        const normalizedMachineonderdeel = item.Machineonderdeel.toLowerCase();
+        const matchesMachineonderdeel = normalizedMachineonderdeel.includes(normalizedSearch);
+        
+        // Return true als een van beide matches
+        return matchesECircuit || matchesMachineonderdeel;
     });
 
     displayResults(matches);
@@ -170,29 +183,33 @@ document.getElementById('procedureSelect').addEventListener('change', async (e) 
 // Event listeners
 searchInput.addEventListener('input', (e) => {
     findMatches(e.target.value);
-    // Save search term to localStorage
-    localStorage.setItem('lastSearch', e.target.value);
+    // Save search term to localStorage - NOTE: localStorage not supported in Claude artifacts
+    if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('lastSearch', e.target.value);
+    }
 });
 
 // Load saved state
 window.addEventListener('load', async () => {
-    // Load saved machine selection
-    const savedMachine = localStorage.getItem('selectedMachine');
-    if (savedMachine) {
-        selectMachine(savedMachine);
-    }
+    // Load saved machine selection - NOTE: localStorage not supported in Claude artifacts
+    if (typeof localStorage !== 'undefined') {
+        const savedMachine = localStorage.getItem('selectedMachine');
+        if (savedMachine) {
+            selectMachine(savedMachine);
+        }
 
-    // Load saved view selection
-    const savedView = localStorage.getItem('currentView');
-    if (savedView) {
-        selectView(savedView);
-    }
+        // Load saved view selection
+        const savedView = localStorage.getItem('currentView');
+        if (savedView) {
+            selectView(savedView);
+        }
 
-    // Load saved search term
-    const lastSearch = localStorage.getItem('lastSearch');
-    if (lastSearch) {
-        searchInput.value = lastSearch;
-        findMatches(lastSearch);
+        // Load saved search term
+        const lastSearch = localStorage.getItem('lastSearch');
+        if (lastSearch) {
+            searchInput.value = lastSearch;
+            findMatches(lastSearch);
+        }
     }
 });
 

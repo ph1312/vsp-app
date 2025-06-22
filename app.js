@@ -13,8 +13,13 @@ const pm1Button = document.getElementById('pm1Button');
 const pm2Button = document.getElementById('pm2Button');
 const pulpButton = document.getElementById('pulpButton');
 
+// Maak variabelen beschikbaar voor debugging
+window.currentMachine = currentMachine;
+window.vspData = vspData;
+
 function selectMachine(machine) {
     currentMachine = machine;
+    window.currentMachine = machine; // Update window variable
     
     // Update buttons
     pm1Button.classList.toggle('active', machine === 'pm1');
@@ -33,7 +38,7 @@ function selectMachine(machine) {
         }
     }
 
-    // Save selection to localStorage - NOTE: localStorage not supported in Claude artifacts
+    // Save selection to localStorage
     if (typeof localStorage !== 'undefined') {
         localStorage.setItem('selectedMachine', machine);
     }
@@ -53,7 +58,7 @@ function selectView(view) {
         loadProcedures();
     }
     
-    // Save view selection to localStorage - NOTE: localStorage not supported in Claude artifacts
+    // Save view selection to localStorage
     if (typeof localStorage !== 'undefined') {
         localStorage.setItem('currentView', view);
     }
@@ -68,7 +73,7 @@ function findMatches(searchTerm) {
     // Check of data beschikbaar is
     if (!vspData[currentMachine] || !vspData[currentMachine].vsp_lijst) {
         console.log('Data not loaded yet for machine:', currentMachine);
-        resultsDiv.innerHTML = '<div>Data wordt geladen...</div>';
+        resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center;">Data wordt geladen...</div>';
         return;
     }
 
@@ -124,6 +129,11 @@ function findMatches(searchTerm) {
 }
 
 function displayResults(matches) {
+    if (matches.length === 0) {
+        resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Geen resultaten gevonden</div>';
+        return;
+    }
+    
     resultsDiv.innerHTML = matches.map(item => `
         <div class="result-card">
             <img src="https://i.ibb.co/5jFg0jq/Schermafbeelding-2025-01-23-201422.png" class="thumbnail">
@@ -222,7 +232,7 @@ document.getElementById('procedureSelect').addEventListener('change', async (e) 
 // Event listeners
 searchInput.addEventListener('input', (e) => {
     findMatches(e.target.value);
-    // Save search term to localStorage - NOTE: localStorage not supported in Claude artifacts
+    // Save search term to localStorage
     if (typeof localStorage !== 'undefined') {
         localStorage.setItem('lastSearch', e.target.value);
     }
@@ -230,7 +240,7 @@ searchInput.addEventListener('input', (e) => {
 
 // Load saved state
 window.addEventListener('load', async () => {
-    // Load saved machine selection - NOTE: localStorage not supported in Claude artifacts
+    // Load saved machine selection
     if (typeof localStorage !== 'undefined') {
         const savedMachine = localStorage.getItem('selectedMachine');
         if (savedMachine) {
@@ -261,6 +271,15 @@ Promise.all([
     vspData.pm1 = pm1Data;
     vspData.pm2 = pm2Data;
     vspData.pulp = pulpData;
+    
+    console.log('Data loaded successfully:');
+    console.log('PM1:', pm1Data.vsp_lijst ? pm1Data.vsp_lijst.length + ' items' : 'No data');
+    console.log('PM2:', pm2Data.vsp_lijst ? pm2Data.vsp_lijst.length + ' items' : 'No data');
+    console.log('PULP:', pulpData.vsp_lijst ? pulpData.vsp_lijst.length + ' items' : 'No data');
+    
     // Start met PM2 geselecteerd
     findMatches(searchInput.value);
-}).catch(error => console.error('Error loading data:', error));
+}).catch(error => {
+    console.error('Error loading data:', error);
+    resultsDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: red;">Fout bij laden van data</div>';
+});

@@ -75,27 +75,6 @@
                 });
             });
         }
-
-        // Debug functie om data te controleren
-        function debugSearchData() {
-            console.log('=== DEBUG INFO ===');
-            console.log('Current machine:', window.currentMachine || 'not set');
-            if (window.vspData) {
-                Object.keys(window.vspData).forEach(machine => {
-                    console.log(`${machine} data:`, window.vspData[machine].vsp_lijst ? window.vspData[machine].vsp_lijst.length + ' items' : 'not loaded');
-                    if (window.vspData[machine].vsp_lijst && window.vspData[machine].vsp_lijst.length > 0) {
-                        console.log(`${machine} first item:`, window.vspData[machine].vsp_lijst[0]);
-                    }
-                });
-            } else {
-                console.log('vspData not available yet');
-            }
-        }
-
-        // Voeg debug functie toe aan window voor console toegang
-        window.debugSearchData = debugSearchData;
-        
-        console.log('Type debugSearchData() in de console om data te controleren');
     </script>
 
     <!-- App Scripts -->

@@ -65,22 +65,61 @@ function findMatches(searchTerm) {
         return;
     }
 
-    // Maak de zoekterm lowercase voor case-insensitive zoeken
+    // Check of data beschikbaar is
+    if (!vspData[currentMachine] || !vspData[currentMachine].vsp_lijst) {
+        console.log('Data not loaded yet for machine:', currentMachine);
+        resultsDiv.innerHTML = '<div>Data wordt geladen...</div>';
+        return;
+    }
+
+    // Maak de zoekterm lowercase en trim spaties
     const normalizedSearch = searchTerm.toLowerCase().trim();
     
+    console.log('Searching for:', `"${normalizedSearch}"`, 'in machine:', currentMachine);
+    console.log('Available data items:', vspData[currentMachine].vsp_lijst.length);
+    
     const matches = vspData[currentMachine].vsp_lijst.filter(item => {
+        // Check of item en vereiste velden bestaan
+        if (!item || !item.E_Circuit || !item.Machineonderdeel) {
+            return false;
+        }
+        
         // Zoek op E-Circuit nummer (bestaande functionaliteit)
-        const normalizedECircuit = item.E_Circuit.replace('15E', '').replace('.', '').toLowerCase();
-        const matchesECircuit = normalizedECircuit.includes(normalizedSearch.replace('15E', '').replace('.', ''));
+        let matchesECircuit = false;
+        try {
+            const normalizedECircuit = item.E_Circuit.toString().replace(/15E/gi, '').replace(/\./g, '').toLowerCase();
+            const searchWithoutPrefix = normalizedSearch.replace(/15e/gi, '').replace(/\./g, '');
+            matchesECircuit = normalizedECircuit.includes(searchWithoutPrefix);
+        } catch (e) {
+            console.log('Error processing E_Circuit:', item.E_Circuit);
+        }
         
-        // Zoek op Machineonderdeel naam (nieuwe functionaliteit)
-        const normalizedMachineonderdeel = item.Machineonderdeel.toLowerCase();
-        const matchesMachineonderdeel = normalizedMachineonderdeel.includes(normalizedSearch);
+        // Zoek op Machineonderdeel naam - verbeterde matching
+        let matchesMachineonderdeel = false;
+        try {
+            const normalizedMachineonderdeel = item.Machineonderdeel.toString().toLowerCase().trim();
+            matchesMachineonderdeel = normalizedMachineonderdeel.includes(normalizedSearch);
+        } catch (e) {
+            console.log('Error processing Machineonderdeel:', item.Machineonderdeel);
+        }
         
-        // Return true als een van beide matches
+        // Debug logging voor eerste match die we vinden
+        if (matchesMachineonderdeel && matches.length < 1) {
+            console.log('Found name match:', {
+                original: item.Machineonderdeel,
+                normalized: item.Machineonderdeel.toString().toLowerCase().trim(),
+                searchTerm: normalizedSearch,
+                result: 'MATCH!'
+            });
+        }
+        
         return matchesECircuit || matchesMachineonderdeel;
     });
 
+    console.log('Total matches found:', matches.length);
+    if (matches.length > 0) {
+        console.log('First match example:', matches[0].Machineonderdeel);
+    }
     displayResults(matches);
 }
 
